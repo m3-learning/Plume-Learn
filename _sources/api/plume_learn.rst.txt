@@ -1,0 +1,21 @@
+plume\_learn package
+====================
+
+Submodules
+----------
+
+plume\_learn.skeleton module
+----------------------------
+
+.. automodule:: plume_learn.skeleton
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: plume_learn
+   :members:
+   :undoc-members:
+   :show-inheritance:
