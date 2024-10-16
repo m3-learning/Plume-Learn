@@ -1,6 +1,15 @@
 plume\_learn package
 ====================
 
+Subpackages
+-----------
+
+.. toctree::
+   :maxdepth: 4
+
+   plume_learn.analyzer
+   plume_learn.ml_utils
+
 Submodules
 ----------
 
