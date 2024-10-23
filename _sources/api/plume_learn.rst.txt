@@ -21,6 +21,22 @@ plume\_learn.skeleton module
    :undoc-members:
    :show-inheritance:
 
+plume\_learn.utils module
+-------------------------
+
+.. automodule:: plume_learn.utils
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.viz module
+-----------------------
+
+.. automodule:: plume_learn.viz
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
 Module contents
 ---------------
 
