@@ -1,0 +1,45 @@
+plume\_learn.ml\_functions package
+==================================
+
+Submodules
+----------
+
+plume\_learn.ml\_functions.build\_model module
+----------------------------------------------
+
+.. automodule:: plume_learn.ml_functions.build_model
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.ml\_functions.hdf5\_dataset module
+-----------------------------------------------
+
+.. automodule:: plume_learn.ml_functions.hdf5_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.ml\_functions.make\_dataset module
+-----------------------------------------------
+
+.. automodule:: plume_learn.ml_functions.make_dataset
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.ml\_functions.trainer module
+-----------------------------------------
+
+.. automodule:: plume_learn.ml_functions.trainer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+Module contents
+---------------
+
+.. automodule:: plume_learn.ml_functions
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -7,8 +7,9 @@ Subpackages
 .. toctree::
    :maxdepth: 4
 
-   plume_learn.analyzer
-   plume_learn.ml_utils
+   plume_learn.ml_functions
+   plume_learn.plume_analyzer
+   plume_learn.plume_utils
 
 Submodules
 ----------
@@ -17,22 +18,6 @@ plume\_learn.skeleton module
 ----------------------------
 
 .. automodule:: plume_learn.skeleton
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-plume\_learn.utils module
--------------------------
-
-.. automodule:: plume_learn.utils
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
-plume\_learn.viz module
------------------------
-
-.. automodule:: plume_learn.viz
    :members:
    :undoc-members:
    :show-inheritance:

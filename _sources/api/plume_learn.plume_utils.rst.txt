@@ -1,0 +1,55 @@
+plume\_learn.plume\_utils namespace
+===================================
+
+.. py:module:: plume_learn.plume_utils
+
+Submodules
+----------
+
+plume\_learn.plume\_utils.AutoAlign module
+------------------------------------------
+
+.. automodule:: plume_learn.plume_utils.AutoAlign
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.plume\_utils.HorizontalLineProfileAnalyzer module
+--------------------------------------------------------------
+
+.. automodule:: plume_learn.plume_utils.HorizontalLineProfileAnalyzer
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.plume\_utils.bresenham\_line module
+------------------------------------------------
+
+.. automodule:: plume_learn.plume_utils.bresenham_line
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.plume\_utils.data\_processing module
+-------------------------------------------------
+
+.. automodule:: plume_learn.plume_utils.data_processing
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.plume\_utils.manage\_plume module
+----------------------------------------------
+
+.. automodule:: plume_learn.plume_utils.manage_plume
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+plume\_learn.plume\_utils.viz module
+------------------------------------
+
+.. automodule:: plume_learn.plume_utils.viz
+   :members:
+   :undoc-members:
+   :show-inheritance:
