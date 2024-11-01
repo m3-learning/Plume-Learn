@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 import matplotlib.pyplot as plt
+from m3util.viz.layout import layout_fig
 
 def visualize_corners(image: np.ndarray, coordinates: np.ndarray, margin=10, color='k', marker_size=200, marker='+', style='both') -> None:
     """
@@ -19,20 +20,18 @@ def visualize_corners(image: np.ndarray, coordinates: np.ndarray, margin=10, col
     - matplotlib Figure object
     """
     if style == 'both' or style == 'complete':
-        fig, ax = plt.subplots()
+        fig, ax = layout_fig(1, 1, figsize=(6, 3), layout='tight')
         ax.imshow(image)
         ax.scatter(coordinates[:, 0], coordinates[:, 1], c=color, s=marker_size, marker=marker)
         ax.set_xticks([])
         ax.set_yticks([])
-        plt.tight_layout()
         plt.show()
     if style == 'both' or style == 'corners':
-        fig, axes = plt.subplots(1, 4, figsize=(12, 3))
+        fig, axes = layout_fig(4, 4, figsize=(6, 2))
         for i in range(4):
             c = coordinates[i]
             axes[i].imshow(image[c[1]-margin:c[1]+margin, c[0]-margin:c[0]+margin], cmap='viridis')
             axes[i].scatter(margin, margin, color='k', marker='+', s=marker_size)
-        plt.tight_layout()
         plt.show()
 
 

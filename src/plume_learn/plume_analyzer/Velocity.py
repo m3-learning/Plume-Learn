@@ -6,12 +6,12 @@ from tqdm import tqdm
 from skimage import measure
 from skimage.measure import regionprops, regionprops_table
 
-from viz import create_axes_grid
-from analyzer.HorizontalLineProfileAnalyzer import HorizontalLineProfileAnalyzer
+from m3util.viz.layout import layout_fig
+from plume_learn.plume_utils.HorizontalLineProfileAnalyzer import HorizontalLineProfileAnalyzer
 
 class VelocityCalculator:
 
-    def __init__(self, time_interval, start_position, position_range, threshold=200, progress_bar=True):
+    def __init__(self, start_position, position_range, threshold=200, progress_bar=True):
         '''
         This is a class used to calculate the velocity of the plume based on its positions in consecutive frames.
 
@@ -28,8 +28,7 @@ class VelocityCalculator:
         :type threshold: int
 
         '''
-
-        self.time_interval = time_interval
+        self.time_interval = 1 # use the default time interval as 1 for the time index
         self.position_range = position_range
         self.start_position = start_position
         self.threshold = threshold
@@ -172,8 +171,7 @@ class VelocityCalculator:
         else:
             titles = np.arange(0, len(plume_position))
 
-        fig, axes = create_axes_grid(len(plume), n_per_row=8, plot_height=1.1)
-        axes = axes.flatten()
+        fig, axes = layout_fig(len(plume), mod=8, figsize=(8, None), unit_h=1, spacing=(0.1, 0.1), layout='tight')
         # fig, axes = plt.subplots(5, 8, figsize=(16, 10))
         for i in range(len(plume)):
             ax = axes[i]
@@ -185,7 +183,6 @@ class VelocityCalculator:
             ax.set_title(titles[i])
         if title:
             plt.suptitle(title)
-        plt.tight_layout()
         plt.show()
 
             
@@ -215,8 +212,8 @@ class VelocityCalculator:
             indexes = [f'{t:.2e}s' for t in time]
         else:
             indexes = np.arange(0, plume_distance.shape[0])
-
-        fig, axes = plt.subplots(1, 2, figsize=(12, 4))
+            
+        fig, axes = layout_fig(2, mod=2, figsize=(8, None), unit_h=1, spacing=(0.1, 0.1), layout='tight')
         axes[0].plot(indexes, plume_distance, '-o', markersize=3)
         axes[0].set_title('Distance')
         axes[0].grid()

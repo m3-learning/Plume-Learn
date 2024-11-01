@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import path, patches, patheffects
-from plume_learn.utils import NormalizeData
+from plume_learn.plume_utils.data_processing import NormalizeData
+from m3util.viz.layout import layout_fig
 
 # Function to label the violin plot
 def label_violinplot(ax, data, label_type='average', text_pos='center', value_format='float',
@@ -116,46 +116,6 @@ def evaluate_image_histogram(image, outlier_std=3):
     plt.show()
 
 
-def create_axes_grid(n_plots, n_per_row, plot_height, figsize='auto'):
-    """
-    Create a grid of axes.
-
-    Args:
-        n_plots: Number of plots.
-        n_per_row: Number of plots per row.
-        plot_height: Height of each plot.
-        n_rows: Number of rows. If None, it is calculated from n_plots and n_per_row.
-        
-    Returns:
-        axes: Axes object.
-    """
-    
-    if figsize == 'auto':
-        figsize = (16, plot_height*n_plots//n_per_row+1)
-    elif isinstance(figsize, tuple):
-        pass
-    elif figsize != None:
-        raise ValueError("figsize must be a tuple or 'auto'")
-    
-    fig, axes = plt.subplots(n_plots//n_per_row+1*int(n_plots%n_per_row>0), n_per_row, figsize=figsize)
-    trim_axes(axes, n_plots)
-    return fig, axes
-        
-
-def trim_axes(axs, N):
-
-    """
-    Reduce *axs* to *N* Axes. All further Axes are removed from the figure.
-    """
-    # axs = axs.flatten()
-    # for ax in axs[N:]:
-    #     ax.remove()
-    # return axs[:N]
-    for i in range(N, len(axs.flatten())):
-        axs.flatten()[i].remove()
-    return axs.flatten()[:N]
-
-
 def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12, title=None, show_colorbar=False, 
                 clim=3, cmap='viridis', scale_range=False, hist_bins=None, show_axis=False, fig=None, axes=None, save_path=None):
     
@@ -184,9 +144,9 @@ def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12,
         
     if isinstance(axes, type(None)):
         if hist_bins: # add a row for histogram
-            fig, axes = create_axes_grid(len(images)*2, img_per_row, img_height*2, figsize='auto')
+            fig, axes = layout_fig(graph=len(images)*2, mod=img_per_row, figsize=(None, img_height*2))
         else:
-            fig, axes = create_axes_grid(len(images), img_per_row, img_height, figsize='auto')
+            fig, axes = layout_fig(graph=len(images), mod=img_per_row, figsize=(None, img_height))
         
     axes = axes.flatten()
     # if hist_bins:
@@ -258,149 +218,3 @@ def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12,
     # print(axes)
     # if isinstance(axes, type(None)): # this is not effective because axes are defined after the function is called
     #     plt.show()
-    
-
-    
-def labelfigs(ax, number=None, style="wb",
-              loc="tl", string_add="", size=8,
-              text_pos="center", inset_fraction=(0.15, 0.15), **kwargs):
-
-    # initializes an empty string
-    text = ""
-
-    # Sets up various color options
-    formatting_key = {
-        "wb": dict(color="w", linewidth=.75),
-        "b": dict(color="k", linewidth=0),
-        "w": dict(color="w", linewidth=0),
-    }
-
-    # Stores the selected option
-    formatting = formatting_key[style]
-
-    xlim = ax.get_xlim()
-    ylim = ax.get_ylim()
-
-    x_inset = (xlim[1] - xlim[0]) * inset_fraction[1]
-    y_inset = (ylim[1] - ylim[0]) * inset_fraction[0]
-
-    if loc == 'tl':
-        x, y = xlim[0] + x_inset, ylim[1] - y_inset
-    elif loc == 'tr':
-        x, y = xlim[1] - x_inset, ylim[1] - y_inset
-    elif loc == 'bl':
-        x, y = xlim[0] + x_inset, ylim[0] + y_inset
-    elif loc == 'br':
-        x, y = xlim[1] - x_inset, ylim[0] + y_inset
-    elif loc == 'ct':
-        x, y = (xlim[0] + xlim[1]) / 2, ylim[1] - y_inset
-
-    elif loc == 'cb':
-        x, y = (xlim[0] + xlim[1]) / 2, ylim[0] + y_inset
-    else:
-        raise ValueError(
-            "Invalid position. Choose from 'tl', 'tr', 'bl', 'br', 'ct', or 'cb'.")
-
-    text += string_add
-
-    if number is not None:
-        text += number_to_letters(number)
-
-    text_ = ax.text(x, y, text, va='center', ha='center',
-                      path_effects=[patheffects.withStroke(
-                      linewidth=formatting["linewidth"], foreground="k")],
-                      color=formatting["color"], size=size, **kwargs
-                      )
-
-    text_.set_zorder(np.inf)
-
-    
-def number_to_letters(num):
-    letters = ''
-    while num >= 0:
-        num, remainder = divmod(num, 26)
-        letters = chr(97 + remainder) + letters
-        num -= 1  # decrease num by 1 because we have processed the current digit
-    return letters
-
-
-
-def path_maker(axes, vertices, facecolor='none', edgecolor='k', linestyle='-', lineweight=1, shape='rect'):
-    """
-    Adds a path (rectangular or custom shape) to the figure.
-
-    Parameters:
-    ----------
-    axes : matplotlib axes
-        Axes to which the path will be added.
-    vertices : list of tuples or numpy array
-        Vertices of the path. For 'rect', it should have 4 coordinates.
-    facecolor : str, optional
-        Face color of the path.
-    edgecolor : str, optional
-        Edge color of the path.
-    linestyle : str, optional
-        Line style of the path.
-    lineweight : float, optional
-        Line weight of the path.
-    shape : str, optional
-        Shape type ('rect' for rectangle or 'custom' for custom polygon).
-    """
-    if shape == 'rect':
-        vertices = [(vertices[0], vertices[2]), (vertices[1], vertices[2]), (vertices[1], vertices[3]), (vertices[0], vertices[3]), (0, 0)]
-        codes = [path.Path.MOVETO] + [path.Path.LINETO] * 3 + [path.Path.CLOSEPOLY]
-    elif shape == 'custom':
-        codes = [path.Path.MOVETO] + [path.Path.LINETO] * (len(vertices) - 2) + [path.Path.CLOSEPOLY]
-    
-    vertices = np.array(vertices, float)
-    path_ = path.Path(vertices, codes)
-    path_patch = patches.PathPatch(path_, facecolor=facecolor, edgecolor=edgecolor, ls=linestyle, lw=lineweight)
-    axes.add_patch(path_patch)
-
-
-def scalebar(axes, image_size, scale_size, units='nm', loc='br', custom_position=None):
-    """
-    Adds a scalebar to the figure with more flexible positioning options.
-
-    Parameters:
-    ----------
-    axes : matplotlib axes
-        Axes to which the scalebar will be added.
-    image_size : int
-        Size of the image.
-    scale_size : float
-        Size of the scalebar.
-    units : str, optional
-        Units of the scalebar.
-    loc : str, optional
-        Location of the scalebar (default: 'br' - bottom right).
-    custom_position : tuple, optional
-        Custom position (x_start, x_end, y_start, y_end) for the scalebar.
-    """
-    # Make sure the axes limits are up to date
-    axes.relim()
-    axes.autoscale_view()
-
-    if custom_position:
-        x_start, x_end, y_start, y_end = custom_position
-    else:
-        x_lim, y_lim = axes.get_xlim(), axes.get_ylim()
-        x_range = x_lim[1] - x_lim[0]
-        y_range = y_lim[1] - y_lim[0]
-
-        # Adjust the position based on image coordinates
-        if loc == 'br':
-            x_start = x_lim[0] + 0.9 * x_range
-            x_end = x_start - (scale_size / image_size) * x_range
-            y_start = y_lim[0] + 0.1 * y_range
-            y_end = y_start + 0.025 * y_range
-
-    # Draw the scalebar using the path_maker function
-    path_maker(axes, [x_start, x_end, y_start, y_end], facecolor='w', edgecolor='k', linestyle='-', lineweight=1)
-
-    # Add an offset to the text label above the scalebar
-    text_offset = 0.05 * y_range  # Adjust the text offset based on the vertical range
-    axes.text((x_start + x_end) / 2, y_end + text_offset,  # Move the text label above the scalebar
-              f'{scale_size} {units}',
-              size=14, weight='bold', ha='center', va='center', color='w',
-              path_effects=[patheffects.withStroke(linewidth=1.5, foreground="k")])

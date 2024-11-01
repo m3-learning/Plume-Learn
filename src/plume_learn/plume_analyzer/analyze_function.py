@@ -2,15 +2,12 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 import seaborn as sns
-import plotly.express as px
 
-from .AutoAlign import align_plumes, visualize_corners
-from .PlumeDataset import plume_dataset
-from .PlumeMetrics import PlumeMetrics
-from .Velocity import VelocityCalculator
-# from .plume_utils import smooth_curve
-# from viz import show_images
-# from .HorizontalLineProfileAnalyzer import HorizontalLineProfileAnalyzer
+from plume_learn.plume_utils.AutoAlign import align_plumes, visualize_corners
+from plume_learn.plume_analyzer.PlumeDataset import plume_dataset
+from plume_learn.plume_analyzer.PlumeMetrics import PlumeMetrics
+from plume_learn.plume_analyzer.Velocity import VelocityCalculator
+from m3util.viz.layout import layout_fig
 
 def load_plumes_and_align(file_path, group_name='PLD_Plumes', plume_name='1-SrRuO3', pre_plume_name=None, frame_view_index=0, plume_view_index=0):
     """
@@ -21,17 +18,19 @@ def load_plumes_and_align(file_path, group_name='PLD_Plumes', plume_name='1-SrRu
     keys = plume_ds.dataset_names()
     print(f"Available datasets: {keys}")
     
-    ds_name = file_path.split('/')[-1].split('_')[0]
     plumes = plume_ds.load_plumes(plume_name)
     
     if pre_plume_name == None:
         pre_plume_name = f'{plume_name}_Pre'
         
     frame_view = plume_ds.load_plumes(pre_plume_name)[plume_view_index, frame_view_index]
-    fig = px.imshow(frame_view)
-    return plumes, ds_name, frame_view, fig
+    fig = None
+    # fig = px.imshow(frame_view, figsize=(8, 8))
+    return plumes, frame_view, fig
 
-def run_plume_analysis(plumes, ds_name, frame_view, coords, coords_path, standard_coords_path, output_csv_path, viz_parms=None, metric_parms=None, align=True):
+
+def run_plume_analysis(plumes, frame_view, coords, coords_path, standard_coords_path, output_csv_path, 
+                       ds_metric=None, viz_parms=None, metric_parms=None, align=True):
     """
     Run the full plume analysis with flexible parameters.
     """
@@ -45,8 +44,7 @@ def run_plume_analysis(plumes, ds_name, frame_view, coords, coords_path, standar
         viz_parms = {
             'viz': True, 
             'index': 5, 
-            'viz_index': list(np.arange(0, 32, 1)), 
-            'plume_name': ds_name
+            'viz_index': list(np.arange(0, 24, 1)), 
         }
     
     align_parms = {'align': align, 'coords': coords, 'coords_standard': coords_standard}
@@ -54,7 +52,6 @@ def run_plume_analysis(plumes, ds_name, frame_view, coords, coords_path, standar
     if metric_parms is None:
         print("No metric parameters provided. Using default parameters.")
         metric_parms = {
-            'time_interval': 500e-9,
             'threshold_list': [5, 200, 'flexible'],
             'rename_dataset': True
         }
@@ -69,7 +66,7 @@ def run_plume_analysis(plumes, ds_name, frame_view, coords, coords_path, standar
     for threshold in metric_parms['threshold_list']:
         print(f"Running analysis for threshold: {threshold}")
         metric_parms['threshold'] = threshold
-        df = analyze_function(plumes, viz_parms, metric_parms, align_parms)
+        df = analyze_function(plumes, ds_metric, viz_parms, metric_parms, align_parms)
         df_all.append(df)
     df_all = pd.concat(df_all)
     df_all.to_csv(output_csv_path)
@@ -83,28 +80,31 @@ def run_plume_analysis(plumes, ds_name, frame_view, coords, coords_path, standar
     ]
     
     for x, y, title in plot_configs:
-        fig, ax = plt.subplots(figsize=(12, 4))
-        sns.lineplot(x=x, y=y, hue="Threshold", data=df_all)
+        fig, ax = layout_fig(1, 1, figsize=(8, 3), layout_fig='tight')
+        sns.lineplot(x=x, y=y, hue="Threshold", data=df_all, ax=ax)
         plt.title(title)
         plt.show()
 
-def analyze_function(plumes, viz_parms, metric_parms, align_parms={'align':False, 'coords':None, 'coords_standard':None}):
+
+def analyze_function(plumes, ds_metric, viz_parms, metric_parms, align_parms={'align':False, 'coords':None, 'coords_standard':None}):
     # plumes = plumes[x_range[0]:x_range[1]]
+
+    # dataset parameters
+    plume_name = ds_metric['ds_name']
+    plume_id = ds_metric['ds_id']
 
     # visualization parameters
     viz = viz_parms['viz']
     index = viz_parms['index']
     viz_index = viz_parms['viz_index']
-    plume_name = viz_parms['plume_name']
     progress_bar = viz_parms['progress_bar']
 
     # metric parameters
-    time_interval = metric_parms['time_interval']
     start_position = metric_parms['start_position']
     position_range = metric_parms['position_range']
     threshold = metric_parms['threshold']
-    P = PlumeMetrics(time_interval, start_position, position_range, threshold=threshold, progress_bar=progress_bar)
-    V = VelocityCalculator(time_interval, start_position, position_range, threshold=threshold, progress_bar=progress_bar)
+    P = PlumeMetrics(start_position, position_range, threshold=threshold, progress_bar=progress_bar)
+    V = VelocityCalculator(start_position, position_range, threshold=threshold, progress_bar=progress_bar)
 
     # align plumes
     if align_parms['align']:
@@ -123,7 +123,8 @@ def analyze_function(plumes, viz_parms, metric_parms, align_parms={'align':False
     df_area = P.to_df(areas)
     # print(plumes[index][viz_index].shape, areas[index][viz_index].shape, coords[index][viz_index].shape, labeled_images[index][viz_index].shape)
     if viz:
-        P.viz_blob_plume(plumes[index][viz_index], areas[index][viz_index], coords[index][viz_index], labeled_images[index][viz_index], title=f'{plume_name}-Area')
+        P.viz_blob_plume(plumes[index][viz_index], areas[index][viz_index], coords[index][viz_index], 
+                         labeled_images[index][viz_index], title=f'{plume_name} - Area')
 
     # calculate velocity for plumes
     plume_positions, plume_distances, plume_velocities = V.calculate_distance_area_for_plumes(plumes)
@@ -138,6 +139,9 @@ def analyze_function(plumes, viz_parms, metric_parms, align_parms={'align':False
         # df = df.rename(columns={'Velocity': f'Velocity({threshold})'})
         # df = df.rename(columns={'Area': f'Area({threshold})'})
         df['Threshold'] = str(threshold)
+        # df['Threshold'] = df['Threshold'].astype(str)
 
     df['Growth'] = plume_name
+    df['Growth_ID'] = plume_id
+    
     return df

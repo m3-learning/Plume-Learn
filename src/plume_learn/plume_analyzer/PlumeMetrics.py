@@ -4,17 +4,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 import pandas as pd
 import seaborn as sns
-from viz import create_axes_grid
-from analyzer.HorizontalLineProfileAnalyzer import HorizontalLineProfileAnalyzer
+from m3util.viz.layout import layout_fig
+from plume_learn.plume_utils.HorizontalLineProfileAnalyzer import HorizontalLineProfileAnalyzer
 
 class PlumeMetrics:
 
-    def __init__(self, time_interval, start_position, position_range, threshold=200, progress_bar=True):
+    def __init__(self, start_position, position_range, threshold=200, progress_bar=True):
         '''
         This is a class used to calculate the velocity of the plume based on its positions in consecutive frames.
-
-        :param time_interval: time interval
-        :type time_interval: int
 
         :param position_range: position range for x axis/horizontal axis
         :type position_range: tuple
@@ -22,7 +19,6 @@ class PlumeMetrics:
         :param start_position: start position
         :type start_position: tuple
         '''
-        self.time_interval = time_interval
         self.start_position = start_position
         self.position_range = position_range
         self.threshold = threshold
@@ -116,17 +112,15 @@ class PlumeMetrics:
         if not isinstance(df, pd.DataFrame):
             raise ValueError('Input should be a pandas DataFrame.')
 
-        fig, ax = plt.subplots(figsize=(12, 4))
-        sns.lineplot(x="time_index", y="area", data=df)
+        fig, ax = layout_fig(1, mod=1, figsize=(8, 3), layout='tight')
+        sns.lineplot(x="time_index", y="area", data=df, ax=ax)
         plt.xlim(*x_range)
         plt.show()
 
 
     @staticmethod
     def viz_blob_plume(plume, areas, coords, labeled_images, title=None):
-
-        fig, axes = create_axes_grid(len(plume), n_per_row=8, plot_height=1.1)
-        axes = axes.flatten()
+        fig, axes = layout_fig(len(plume), mod=8, figsize=(8, None), unit_h=1, spacing=(0, 0), layout='tight')
         for i in range(len(plume)):
             axes[i].imshow(labeled_images[i], cmap='viridis')
             if np.sum(coords[i]) != 0:
@@ -135,8 +129,8 @@ class PlumeMetrics:
 
         if title:
             plt.suptitle(title)
-        plt.tight_layout()
         plt.show()
+        
 
     @staticmethod
     def label_blob(image, image_binary, labels, stats, centroids, sorted_indices, background_index, n_show=5):
@@ -153,8 +147,7 @@ class PlumeMetrics:
             mask = labels == label
             image_colored[mask] = colors[i + 1][:3] * 255  # Convert color from [0,1] to [0,255]
 
-        fig, axes = plt.subplots(1, 3, figsize=(6, 2))
-
+        fig, axes = layout_fig(3, mod=3, figsize=(6, 2), layout='tight')
         axes[0].imshow(image, cmap='gray')
         axes[0].set_title(f'Original image')
 
@@ -169,5 +162,4 @@ class PlumeMetrics:
             plt.text(centroids[label][0], centroids[label][1], f'{i}th area:{stats[label, -1]}',
                     color='white', fontsize=8, ha='center', va='center')
         plt.axis('off')
-        plt.tight_layout()
         plt.show()
