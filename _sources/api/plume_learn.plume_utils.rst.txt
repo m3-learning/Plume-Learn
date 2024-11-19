@@ -22,14 +22,6 @@ plume\_learn.plume\_utils.HorizontalLineProfileAnalyzer module
    :undoc-members:
    :show-inheritance:
 
-plume\_learn.plume\_utils.bresenham\_line module
-------------------------------------------------
-
-.. automodule:: plume_learn.plume_utils.bresenham_line
-   :members:
-   :undoc-members:
-   :show-inheritance:
-
 plume\_learn.plume\_utils.data\_processing module
 -------------------------------------------------
 
