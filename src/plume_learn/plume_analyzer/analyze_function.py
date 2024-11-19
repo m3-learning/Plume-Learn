@@ -141,7 +141,7 @@ def analyze_function(plumes, ds_metric, viz_parms, metric_parms, align_parms={'a
         df['Threshold'] = str(threshold)
         # df['Threshold'] = df['Threshold'].astype(str)
 
-    df['Growth'] = plume_name
-    df['Growth_ID'] = plume_id
+    df['Sample Name'] = plume_name
+    df['Sample ID'] = plume_id
     
     return df

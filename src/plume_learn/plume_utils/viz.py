@@ -1,10 +1,101 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib.ticker as ticker
 from plume_learn.plume_utils.data_processing import NormalizeData
 from m3util.viz.layout import layout_fig
 
+def set_cbar(fig, ax, cbar_label=None, scientific_notation=True, logscale=False, tick_in=True):
+    cbar = fig.colorbar(ax.collections[0], ax=ax, orientation='vertical', pad=0.02, shrink=1)
+
+    if scientific_notation:
+        if logscale:
+            formatter = ticker.LogFormatterMathtext(base=10)  # Logarithmic formatter
+        else:
+            formatter = ticker.ScalarFormatter(useMathText=True)
+            formatter.set_scientific(True)
+            formatter.set_powerlimits((-1, 1))
+
+        cbar.ax.yaxis.set_major_formatter(formatter)
+    
+    if cbar_label:
+        cbar.set_label(cbar_label, rotation=90, labelpad=4)
+        
+    if tick_in:
+        cbar.ax.tick_params(direction='in')  # Set tick direction to 'in'
+
+
+def set_labels(ax, xlabel=None, ylabel=None, title=None, xlim=None, ylim=None, yaxis_style='sci', label_fontsize=12, title_fontsize=12, ticklabel_fontsize=10, scientific_notation_fontsize=8, logscale=False, legend=None, legend_fontsize=8, legend_loc='best', show_ticks=True, ticks_both_sides=True):
+    """
+    Set labels and other properties of the given axes.
+
+    Args:
+        ax: Axes object.
+        xlabel (str, optional): X-axis label. Defaults to None.
+        ylabel (str, optional): Y-axis label. Defaults to None.
+        title (str, optional): Plot title. Defaults to None.
+        xlim (tuple, optional): X-axis limits. Defaults to None.
+        ylim (tuple, optional): Y-axis limits. Defaults to None.
+        yaxis_style (str, optional): Y-axis style. Defaults to 'sci'.
+        logscale (bool, optional): Use log scale on the y-axis. Defaults to False.
+        legend (list, optional): Legend labels. Defaults to None.
+        ticks_both_sides (bool, optional): Display ticks on both sides of the axes. Defaults to True.
+
+    Returns:
+        None
+    """
+    if type(xlabel) != type(None): ax.set_xlabel(xlabel, fontsize=label_fontsize)
+    if type(ylabel) != type(None): ax.set_ylabel(ylabel, fontsize=label_fontsize)
+    if type(title) != type(None): ax.set_title(title, fontsize=title_fontsize)
+    if type(xlim) != type(None): ax.set_xlim(xlim)
+    if type(ylim) != type(None): ax.set_ylim(ylim)
+    
+    if yaxis_style == 'sci':
+        formatter = ticker.ScalarFormatter(useMathText=True)
+        formatter.set_powerlimits((0, 0))  # Force scientific notation
+        ax.yaxis.set_major_formatter(formatter)
+        ax.yaxis.get_offset_text().set_fontsize(scientific_notation_fontsize)  # Adjust font size for the magnitude label
+
+    # elif yaxis_style == 'float':
+    #     ax.yaxis.set_major_formatter(FormatStrFormatter('%.3f'))
+        # ax.ticklabel_format(axis='y', style='plain')   
+
+    if logscale: ax.set_yscale("log") 
+    if legend: 
+        if legend == 'auto' or legend == True: 
+            handles, labels = ax.get_legend_handles_labels()  # Automatically get handles and labels from the plot
+            ax.legend(handles, labels, fontsize=legend_fontsize, loc=legend_loc)
+        else:
+            ax.legend(legend, fontsize=legend_fontsize, loc=legend_loc)
+            
+    if show_ticks:
+        ax.tick_params(axis="x", direction="in", length=5, labelsize=ticklabel_fontsize)
+        ax.tick_params(axis="y", direction="in", length=5, labelsize=ticklabel_fontsize)
+        if ticks_both_sides:
+            ax.yaxis.set_ticks_position('both')
+            ax.xaxis.set_ticks_position('both')
+    elif show_ticks == False:
+        ax.tick_params(axis="x", direction="in", length=0, labelsize=ticklabel_fontsize)
+        ax.tick_params(axis="y", direction="in", length=0, labelsize=ticklabel_fontsize)
+
+
+def to_scientific_10_power_format(value):
+    # Convert the value to scientific notation
+    sci_notation = "{:.2e}".format(value)
+    
+    # Split the base and exponent
+    base, exponent = sci_notation.split('e')
+    
+    # Convert exponent to an integer to remove extra + and leading zeros
+    exponent = int(exponent)
+    
+    # Format in LaTeX style for Matplotlib or Jupyter Notebook
+    label_text = f"{base}\\times10^{{{exponent}}}"
+    
+    return rf"${label_text}$"  # Add $ symbols for LaTeX formatting
+
+
 # Function to label the violin plot
-def label_violinplot(ax, data, label_type='average', text_pos='center', value_format='float',
+def label_violinplot(ax, data, label_type='average', text_pos='center', value_format='float', text_size=14, 
                      offset_parms={'x_type': 'fixed', 'x_value': 0.02, 'y_type': 'fixed', 'y_value': 0.02}):
     """
     Label a violin plot with flexible offsets.
@@ -37,7 +128,7 @@ def label_violinplot(ax, data, label_type='average', text_pos='center', value_fo
             elif value_format == 'int':
                 label_text = f"{int(value)}"
             elif value_format == 'scientific':
-                label_text = f"{value:.2e}"
+                label_text = to_scientific_10_power_format(value)
         elif label_type == 'total_number':
             label_text = f"n: {len(data)}"
         
@@ -55,10 +146,10 @@ def label_violinplot(ax, data, label_type='average', text_pos='center', value_fo
         # Position text based on text_pos
         if text_pos == 'center':
             # Label at the center of the violin
-            ax.text(tick, y_offset, label_text, horizontalalignment='center', size=14, weight='semibold')
+            ax.text(tick, y_offset, label_text, horizontalalignment='center', size=text_size, weight='semibold')
         elif text_pos == 'right':
             # Label slightly to the right of the tick
-            ax.text(x_offset, y_offset, label_text, horizontalalignment='left', size=14, weight='semibold')
+            ax.text(x_offset, y_offset, label_text, horizontalalignment='left', size=text_size, weight='semibold')
 
 
 
@@ -116,8 +207,7 @@ def evaluate_image_histogram(image, outlier_std=3):
     plt.show()
 
 
-def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12, title=None, show_colorbar=False, 
-                clim=3, cmap='viridis', scale_range=False, hist_bins=None, show_axis=False, fig=None, axes=None, save_path=None):
+def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12, title=None, show_colorbar=False, clim=3, cmap='viridis', scale_range=False, hist_bins=None, show_axis=False, fig=None, axes=None, save_path=None):
     
     '''
     Plots multiple images in grid.
@@ -139,8 +229,10 @@ def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12,
         assert len(images) == len(clim), "length of clims is not matched with number of images"
 
     h = images[0].shape[1] // images[0].shape[0]*img_height + 1
-    if isinstance(labels, type(None)):
+    if labels == 'index':
         labels = range(len(images))
+    elif labels == None:
+        labels = ['']*len(images)
         
     if isinstance(axes, type(None)):
         if hist_bins: # add a row for histogram
@@ -148,7 +240,7 @@ def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12,
         else:
             fig, axes = layout_fig(graph=len(images), mod=img_per_row, figsize=(None, img_height))
         
-    axes = axes.flatten()
+    # axes = axes.flatten()
     # if hist_bins:
     #     trim_axes(axes, len(images)*2)
     # else:
@@ -177,7 +269,8 @@ def show_images(images, labels=None, img_per_row=8, img_height=1, label_size=12,
         #     index = (i//img_per_row)*n, i%img_per_row
         # print(i, index)
 
-        axes[index].set_title(labels[i], fontsize=label_size)
+        if labels[i]:
+            axes[index].set_title(labels[i], fontsize=label_size)
         im = axes[index].imshow(img, cmap=cmap)
 
         if show_colorbar:
