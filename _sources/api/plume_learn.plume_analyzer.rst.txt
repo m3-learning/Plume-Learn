@@ -9,37 +9,37 @@ plume\_learn.plume\_analyzer.PlumeDataset module
 
 .. automodule:: plume_learn.plume_analyzer.PlumeDataset
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 plume\_learn.plume\_analyzer.PlumeMetrics module
 ------------------------------------------------
 
 .. automodule:: plume_learn.plume_analyzer.PlumeMetrics
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 plume\_learn.plume\_analyzer.Velocity module
 --------------------------------------------
 
 .. automodule:: plume_learn.plume_analyzer.Velocity
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 plume\_learn.plume\_analyzer.analyze\_function module
 -----------------------------------------------------
 
 .. automodule:: plume_learn.plume_analyzer.analyze_function
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: plume_learn.plume_analyzer
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

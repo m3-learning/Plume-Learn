@@ -19,13 +19,13 @@ plume\_learn.skeleton module
 
 .. automodule:: plume_learn.skeleton
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 Module contents
 ---------------
 
 .. automodule:: plume_learn
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:

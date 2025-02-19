@@ -11,37 +11,37 @@ plume\_learn.plume\_utils.AutoAlign module
 
 .. automodule:: plume_learn.plume_utils.AutoAlign
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 plume\_learn.plume\_utils.HorizontalLineProfileAnalyzer module
 --------------------------------------------------------------
 
 .. automodule:: plume_learn.plume_utils.HorizontalLineProfileAnalyzer
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 plume\_learn.plume\_utils.data\_processing module
 -------------------------------------------------
 
 .. automodule:: plume_learn.plume_utils.data_processing
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 plume\_learn.plume\_utils.manage\_plume module
 ----------------------------------------------
 
 .. automodule:: plume_learn.plume_utils.manage_plume
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
 
 plume\_learn.plume\_utils.viz module
 ------------------------------------
 
 .. automodule:: plume_learn.plume_utils.viz
    :members:
-   :undoc-members:
    :show-inheritance:
+   :undoc-members:
