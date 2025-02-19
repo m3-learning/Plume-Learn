@@ -156,7 +156,6 @@ def label_violinplot(ax, data, label_type='average', text_pos='center', value_fo
             ax.text(x_offset, y_offset, label_text, horizontalalignment='left', size=text_size, weight='semibold')
 
 
-
 def evaluate_image_histogram(image, outlier_std=3):
     """
     Generate a histogram of image pixel values with Z-score clipping and label mean, min, max, and std.
