@@ -4,7 +4,7 @@ import matplotlib.ticker as ticker
 from plume_learn.plume_utils.data_processing import NormalizeData
 from m3util.viz.layout import layout_fig
 
-def set_cbar(fig, ax, cbar_label=None, scientific_notation=True, logscale=False, tick_in=True):
+def set_cbar(fig, ax, cbar_label=None, scientific_notation=True, logscale=False, tick_in=True, ticklabel_fontsize=10, labelpad=4, fontsize=10):
     cbar = fig.colorbar(ax.collections[0], ax=ax, orientation='vertical', pad=0.02, shrink=1)
 
     if scientific_notation:
@@ -18,13 +18,17 @@ def set_cbar(fig, ax, cbar_label=None, scientific_notation=True, logscale=False,
         cbar.ax.yaxis.set_major_formatter(formatter)
     
     if cbar_label:
-        cbar.set_label(cbar_label, rotation=90, labelpad=4)
-        
+        cbar.ax.xaxis.set_label_position('bottom')  # Move label to the bottom
+        cbar.ax.xaxis.set_ticks_position('bottom')  # Move ticks to the bottom as well
+        cbar.set_label(cbar_label, rotation=0, labelpad=labelpad, fontsize=fontsize)  # Horizontal label with padding
+        cbar.ax.yaxis.set_label_coords(1.5, -0.04)  # (x, y) relative to the colorbar
+
     if tick_in:
-        cbar.ax.tick_params(direction='in')  # Set tick direction to 'in'
+        cbar.ax.tick_params(direction='in', labelsize=ticklabel_fontsize)  # Set tick direction to 'in'
+    else:
+        cbar.ax.tick_params(labelsize=ticklabel_fontsize)
 
-
-def set_labels(ax, xlabel=None, ylabel=None, title=None, xlim=None, ylim=None, yaxis_style='sci', label_fontsize=12, title_fontsize=12, ticklabel_fontsize=10, scientific_notation_fontsize=8, logscale=False, legend=None, legend_fontsize=8, legend_loc='best', show_ticks=True, ticks_both_sides=True):
+def set_labels(ax, xlabel=None, ylabel=None, title=None, xlim=None, ylim=None, yaxis_style='sci', label_fontsize=12, title_fontsize=12, ticklabel_fontsize=10, scientific_notation_fontsize=8, logscale=False, legend=None, legend_fontsize=8, legend_loc='best', show_ticks=True, ticks_both_sides=True, tick_padding=10):
     """
     Set labels and other properties of the given axes.
 
@@ -68,14 +72,14 @@ def set_labels(ax, xlabel=None, ylabel=None, title=None, xlim=None, ylim=None, y
             ax.legend(legend, fontsize=legend_fontsize, loc=legend_loc)
             
     if show_ticks:
-        ax.tick_params(axis="x", direction="in", length=5, labelsize=ticklabel_fontsize)
-        ax.tick_params(axis="y", direction="in", length=5, labelsize=ticklabel_fontsize)
+        ax.tick_params(axis="x", direction="in", length=5, labelsize=ticklabel_fontsize, pad=tick_padding)
+        ax.tick_params(axis="y", direction="in", length=5, labelsize=ticklabel_fontsize, pad=tick_padding)
         if ticks_both_sides:
             ax.yaxis.set_ticks_position('both')
             ax.xaxis.set_ticks_position('both')
     elif show_ticks == False:
-        ax.tick_params(axis="x", direction="in", length=0, labelsize=ticklabel_fontsize)
-        ax.tick_params(axis="y", direction="in", length=0, labelsize=ticklabel_fontsize)
+        ax.tick_params(axis="x", direction="in", length=0, labelsize=ticklabel_fontsize, pad=tick_padding)
+        ax.tick_params(axis="y", direction="in", length=0, labelsize=ticklabel_fontsize, pad=tick_padding)
 
 
 def to_scientific_10_power_format(value):
@@ -159,7 +163,7 @@ def evaluate_image_histogram(image, outlier_std=3):
     
     Parameters:
     image (numpy array): The input image array. Assumes a grayscale image with values in range 0-255.
-    z_thresh (float): The Z-score threshold for clipping.
+    outlier_std (float): The Z-score threshold for clipping.
     """
     # Flatten the image to a 1D array
     pixel_values = image.flatten()
