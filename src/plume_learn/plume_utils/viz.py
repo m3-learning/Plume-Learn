@@ -24,9 +24,9 @@ def set_cbar(fig, ax, cbar_label=None, scientific_notation=True, logscale=False,
         cbar.ax.yaxis.set_label_coords(1.5, -0.04)  # (x, y) relative to the colorbar
 
     if tick_in:
-        cbar.ax.tick_params(direction='in', labelsize=ticklabel_fontsize)  # Set tick direction to 'in'
+        cbar.ax.tick_params(direction='in', labelsize=ticklabel_fontsize, which='both')  # Set tick direction to 'in'
     else:
-        cbar.ax.tick_params(labelsize=ticklabel_fontsize)
+        cbar.ax.tick_params(labelsize=ticklabel_fontsize, which='both')
 
 def set_labels(ax, xlabel=None, ylabel=None, title=None, xlim=None, ylim=None, yaxis_style='sci', label_fontsize=12, title_fontsize=12, ticklabel_fontsize=10, scientific_notation_fontsize=8, logscale=False, legend=None, legend_fontsize=8, legend_loc='best', show_ticks=True, ticks_both_sides=True, tick_padding=10):
     """
