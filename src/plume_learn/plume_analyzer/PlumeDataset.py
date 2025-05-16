@@ -33,7 +33,7 @@ class plume_dataset():
         return datasets
                 
 
-    def load_plumes(self, dataset_name):
+    def load_plumes(self, dataset_name, range='full'):
 
         '''
         This is a utility function used to load plume images from hdf5 file 
@@ -43,5 +43,11 @@ class plume_dataset():
         :type dataset_name: str
         '''
         with h5py.File(self.file_path) as hf:
-            plumes = np.array(hf[self.group_name][dataset_name])
+            if range == 'full':
+                plumes = np.array(hf[self.group_name][dataset_name])
+            elif isinstance(range, tuple) or isinstance(range, list):
+                if len(range) == 2:
+                    plumes = np.array(hf[self.group_name][dataset_name])[range[0]:range[1]]
+                else:
+                    raise ValueError("Invalid range value. Use 'full', or tuple or list.")
         return plumes
