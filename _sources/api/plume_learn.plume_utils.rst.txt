@@ -22,6 +22,14 @@ plume\_learn.plume\_utils.HorizontalLineProfileAnalyzer module
    :show-inheritance:
    :undoc-members:
 
+plume\_learn.plume\_utils.Video\_maker module
+---------------------------------------------
+
+.. automodule:: plume_learn.plume_utils.Video_maker
+   :members:
+   :show-inheritance:
+   :undoc-members:
+
 plume\_learn.plume\_utils.data\_processing module
 -------------------------------------------------
 
