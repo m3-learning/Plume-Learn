@@ -47,7 +47,7 @@ class plume_dataset():
                 plumes = np.array(hf[self.group_name][dataset_name])
             elif isinstance(range, tuple) or isinstance(range, list):
                 if len(range) == 2:
-                    plumes = np.array(hf[self.group_name][dataset_name])[range[0]:range[1]]
+                    plumes = np.array(hf[self.group_name][dataset_name][range[0]:range[1]])
                 else:
                     raise ValueError("Invalid range value. Use 'full', or tuple or list.")
         return plumes
