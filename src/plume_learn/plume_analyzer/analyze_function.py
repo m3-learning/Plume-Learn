@@ -28,16 +28,23 @@ def load_plumes_and_align(file_path, group_name='PLD_Plumes', plume_name='1-SrRu
     # fig = px.imshow(frame_view, figsize=(8, 8))
     return plumes, frame_view, fig
 
+def skip_empty_plumes(plumes):  
+    """
+    Skip empty plumes.
+    """
+    plumes = np.array([plume for plume in plumes if np.mean(plume[:30]) > 5])
+    return plumes
 
-def run_plume_analysis(plumes, frame_view, coords, coords_path, standard_coords_path, output_csv_path, 
-                       ds_metric=None, viz_parms=None, metric_parms=None, align=True):
+def run_plume_analysis(plumes, output_csv_path, align_parms=None,
+                       ds_metric=None, viz_parms=None, metric_parms=None):
     """
     Run the full plume analysis with flexible parameters.
     """
-    visualize_corners(frame_view, coords, color='k', marker_size=200, style='both')
-    np.save(coords_path, coords)
-    
-    coords_standard = np.load(standard_coords_path)
+    if align_parms is None:
+        raise ValueError('Please provide the alignment parameters')
+
+    if ds_metric is None:
+        ds_metric = {'ds_name': 'plume', 'ds_id': 'plume'}
 
     if viz_parms is None:
         print("No visualization parameters provided. Using default parameters.")
@@ -46,21 +53,28 @@ def run_plume_analysis(plumes, frame_view, coords, coords_path, standard_coords_
             'index': 5, 
             'viz_index': list(np.arange(0, 24, 1)), 
         }
-    
-    align_parms = {'align': align, 'coords': coords, 'coords_standard': coords_standard}
-    
+
     if metric_parms is None:
         print("No metric parameters provided. Using default parameters.")
         metric_parms = {
             'threshold_list': [5, 200, 'flexible'],
-            'rename_dataset': True
+            'rename_dataset': True,
+            'skip_empty_plumes': True
         }
         
-    if align:
+    visualize_corners(align_parms['frame_view'], align_parms['coords'], color='k', marker_size=200, style='both')
+    np.save(align_parms['coords_path'], align_parms['coords'])
+    coords_standard = np.load(align_parms['standard_coords_path'])
+    align_parms['coords_standard'] = coords_standard
+
+    if align_parms['align']:
         start_position = np.round(np.mean(coords_standard[:2], axis=0)).astype(np.int32) # start position of plume  (x, y)
         position_range = np.min(coords_standard[:,0]), np.max(coords_standard[:,0]) # x position range
         metric_parms['start_position'] = start_position
         metric_parms['position_range'] = position_range
+
+    if metric_parms['skip_empty_plumes']:
+        plumes = skip_empty_plumes(plumes)
     
     df_all = []
     for threshold in metric_parms['threshold_list']:
